@@ -1,11 +1,36 @@
 import InputForm from "@/components/InputForm";
 import { todosState } from "@/components/atoms";
+import db from "@/lib/firebase";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  orderBy,
+  query,
+} from "@firebase/firestore";
 import Head from "next/head";
 import Link from "next/link";
+import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
 export default function Home() {
+  // state
   const [todos, setTodos] = useRecoilState(todosState);
+
+  useEffect(() => {
+    // DBからデータを取得(idで昇順にソート)
+    const todoData = collection(db, "todos");
+    const orderedTodoData = query(todoData, orderBy("id"));
+    getDocs(orderedTodoData).then((snapShot) => {
+      console.log(snapShot.docs.map((doc) => ({ ...doc.data() })));
+      setTodos(snapShot.docs.map((doc) => ({ ...doc.data() })));
+    });
+
+    // リアルタイムで取得
+    onSnapshot(orderedTodoData, (todo) => {
+      setTodos(todo.docs.map((doc) => ({ ...doc.data() })));
+    });
+  }, []);
 
   return (
     <>

@@ -1,12 +1,17 @@
-import { useRecoilState } from "recoil";
-import { todosState } from "../../components/atoms";
-import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import Head from "next/head";
+import { todosState } from "../../components/atoms";
+import db from "@/lib/firebase";
+import { addDoc, collection } from "@firebase/firestore";
+
+import { useRouter } from "next/router";
 
 export default function CreateTodo() {
-  const [todos, setTodos] = useRecoilState(todosState);
+  const router = useRouter();
+  // state
+  const todos = useRecoilValue(todosState);
   const [todo, setTodo] = useState({
     id: 0,
     title: "",
@@ -17,8 +22,7 @@ export default function CreateTodo() {
   const [inputTitle, setInputTitle] = useState("");
   const [inputContent, setInputContent] = useState("");
 
-  const router = useRouter();
-
+  // 関数
   const handleInputTitleChange = (e) => {
     setInputTitle(e.target.value);
   };
@@ -29,25 +33,25 @@ export default function CreateTodo() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (e.target.value === "") {
-      setTodos([
-        ...todos,
-        {
-          id: inputId,
-          title: inputTitle,
-          content: inputContent,
-          status: "未着手",
-        },
-      ]);
-      setInputId(inputId + 1);
-      setTodo("");
-      setInputTitle("");
-      setInputContent("");
+
+    // todo作成
+    setTodo({
+      id: inputId,
+      title: inputTitle,
+      content: inputContent,
+      status: "未着手",
+    });
+  };
+
+  useEffect(() => {
+    if (todo.title !== "") {
+      // DBに追加
+      const addTodo = collection(db, "todos");
+      addDoc(addTodo, todo);
 
       router.push("/");
     }
-    alert("タイトルが入力されていません。");
-  };
+  }, [todo]);
 
   return (
     <>

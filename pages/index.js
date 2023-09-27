@@ -22,7 +22,6 @@ export default function Home() {
     const todoData = collection(db, "todos");
     const orderedTodoData = query(todoData, orderBy("id"));
     getDocs(orderedTodoData).then((snapShot) => {
-      console.log(snapShot.docs.map((doc) => ({ ...doc.data() })));
       setTodos(snapShot.docs.map((doc) => ({ ...doc.data() })));
     });
 
@@ -46,7 +45,9 @@ export default function Home() {
       <section>
         {todos.map((todo) => (
           <div key={todo.id}>
-            <h1>{todo.title}</h1>
+            <Link href={`todos/${todo.id}`}>
+              <h1>{todo.title}</h1>
+            </Link>
             <p>{todo.status}</p>
           </div>
         ))}

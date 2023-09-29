@@ -1,4 +1,3 @@
-import InputForm from "@/components/InputForm";
 import { todosState } from "@/components/atoms";
 import db from "@/lib/firebase";
 import {
@@ -20,14 +19,14 @@ export default function Home() {
   useEffect(() => {
     // DBからデータを取得(idで昇順にソート)
     const todoData = collection(db, "todos");
-    const orderedTodoData = query(todoData, orderBy("id"));
+    const orderedTodoData = query(todoData, orderBy("createdAt"));
     getDocs(orderedTodoData).then((snapShot) => {
-      setTodos(snapShot.docs.map((doc) => ({ ...doc.data() })));
+      setTodos(snapShot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
     // リアルタイムで取得
     onSnapshot(orderedTodoData, (todo) => {
-      setTodos(todo.docs.map((doc) => ({ ...doc.data() })));
+      setTodos(todo.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
   }, []);
 
@@ -39,7 +38,6 @@ export default function Home() {
 
       <section>
         <Link href="./todos/create">新規作成</Link>
-        {/* <InputForm /> */}
       </section>
 
       <section>

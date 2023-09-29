@@ -2,10 +2,10 @@ import getTodo from "@/lib/todos";
 import Link from "next/link";
 
 export default function Todo({ todo }) {
-  console.log("todo: ", todo);
   return (
     <>
       <div>
+        <Link href={`./${todo.id}/edit`}>編集</Link>
         <h1>{todo.title}</h1>
         <p>{todo.status}</p>
         <hr />
@@ -19,6 +19,10 @@ export default function Todo({ todo }) {
 export async function getServerSideProps({ params }) {
   const id = params.id;
   const todo = await getTodo(id);
+
+  if (todo.createdAt) {
+    todo.createdAt = todo.createdAt.toMillis();
+  }
 
   return {
     props: {

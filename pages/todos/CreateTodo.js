@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import { todosState } from "../../components/atoms";
 import db from "@/lib/firebase";
 import { addDoc, collection } from "@firebase/firestore";
-import { serverTimestamp } from "firebase/firestore";
-
 import { useRouter } from "next/router";
 
 export default function CreateTodo() {
   const router = useRouter();
   // state
+  const todos = useRecoilValue(todosState);
+  const [insertTodo, setInsertTodo] = useState();
+  // {id: 0,
+  // title: "",
+  // content: "",
+  // status: "",}
+  const [inputId, setInputId] = useState(todos.length + 1);
   const [insertTitle, setinsertTitle] = useState("");
   const [insertContent, setinsertContent] = useState("");
 
@@ -25,17 +32,29 @@ export default function CreateTodo() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const todosCollection = collection(db, "todos");
-    // todoインサート
-    await addDoc(todosCollection, {
+    // todo作成
+    await setInsertTodo({
       title: insertTitle,
       content: insertContent,
       status: "未着手",
-      createdAt: serverTimestamp(),
     });
 
-    router.push("/");
+    // todoインサート
+    const addTodo = collection(db, "todos");
+    await addDoc(addTodo, insertTodo);
+
+    //
   };
+
+  useEffect(() => {
+    if (insertTodo.title !== "") {
+      // DBに追加
+      const addTodo = collection(db, "todos");
+      addDoc(addTodo, insertTodo);
+
+      router.push("/");
+    }
+  }, [insertTodo]);
 
   return (
     <>

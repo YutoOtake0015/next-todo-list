@@ -1,10 +1,11 @@
 import { useRecoilValue } from "recoil";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { todosState } from "../../components/atoms";
 import db from "@/lib/firebase";
 import { addDoc, collection } from "@firebase/firestore";
+import { serverTimestamp } from "firebase/firestore";
 
 import { useRouter } from "next/router";
 
@@ -12,46 +13,34 @@ export default function CreateTodo() {
   const router = useRouter();
   // state
   const todos = useRecoilValue(todosState);
-  const [todo, setTodo] = useState({
-    id: 0,
-    title: "",
-    content: "",
-    status: "",
-  });
-  const [inputId, setInputId] = useState(todos.length + 1);
-  const [inputTitle, setInputTitle] = useState("");
-  const [inputContent, setInputContent] = useState("");
+  const [insertTitle, setinsertTitle] = useState("");
+  const [insertContent, setinsertContent] = useState("");
 
   // 関数
-  const handleInputTitleChange = (e) => {
-    setInputTitle(e.target.value);
+  const handleInsertTitleChange = (e) => {
+    setinsertTitle(e.target.value);
   };
 
-  const handleInputContentChange = (e) => {
-    setInputContent(e.target.value);
+  const handleInsertContentChange = (e) => {
+    setinsertContent(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // todo作成
-    setTodo({
-      id: inputId,
-      title: inputTitle,
-      content: inputContent,
+    const todosCollection = collection(db, "todos");
+    // todoインサート
+    const docRef = await addDoc(todosCollection, {
+      title: insertTitle,
+      content: insertContent,
       status: "未着手",
+      createdAt: serverTimestamp(),
     });
+
+    // ドキュメントidをstateに設定
+    console.log("docRef.id:  ", docRef.id);
+    router.push("/");
   };
-
-  useEffect(() => {
-    if (todo.title !== "") {
-      // DBに追加
-      const addTodo = collection(db, "todos");
-      addDoc(addTodo, todo);
-
-      router.push("/");
-    }
-  }, [todo]);
 
   return (
     <>
@@ -65,8 +54,8 @@ export default function CreateTodo() {
             type="text"
             label="title"
             name="title"
-            onChange={handleInputTitleChange}
-            value={inputTitle}
+            onChange={handleInsertTitleChange}
+            value={insertTitle}
           />
         </div>
         <br />
@@ -75,8 +64,8 @@ export default function CreateTodo() {
           <textarea
             label="content"
             name="content"
-            onChange={handleInputContentChange}
-            value={inputContent}
+            onChange={handleInsertContentChange}
+            value={insertContent}
           />
         </div>
         <button>作成</button>

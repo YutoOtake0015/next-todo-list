@@ -1,7 +1,7 @@
 import getTodo from "@/lib/todos";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import statusItems from "../components/items";
+import statusItems from "../../components/items";
 
 export default function Todo({ todo }) {
   const router = useRouter();

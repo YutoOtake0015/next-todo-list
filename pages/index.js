@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
-import statusItems from "./components/items";
+import statusItems from "../components/items";
 
 export default function Home() {
   // state

@@ -1,17 +1,25 @@
 import getTodo from "@/lib/todos";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import statusItems from "../components/items";
 
 export default function Todo({ todo }) {
+  const router = useRouter();
+  // 関数
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
     <>
       <div>
         <Link href={`./${todo.id}/edit`}>編集</Link>
         <h1>{todo.title}</h1>
-        <p>{todo.status}</p>
+        <p>{statusItems[todo.status]}</p>
         <hr />
         <p>{todo.content}</p>
       </div>
-      <Link href="/">戻る</Link>
+      <button onClick={handleBack}>戻る</button>
     </>
   );
 }

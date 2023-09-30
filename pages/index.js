@@ -12,6 +12,8 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
+import statusItems from "./components/items";
+
 export default function Home() {
   // state
   const [todos, setTodos] = useRecoilState(todosState);
@@ -46,7 +48,7 @@ export default function Home() {
             <Link href={`todos/${todo.id}`}>
               <h1>{todo.title}</h1>
             </Link>
-            <p>{todo.status}</p>
+            <p>{statusItems[todo.status]}</p>
           </div>
         ))}
       </section>

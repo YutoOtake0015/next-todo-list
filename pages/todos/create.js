@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Link from "next/link";
 import Head from "next/head";
 import db from "@/lib/firebase";
 import { addDoc, collection } from "@firebase/firestore";
@@ -20,6 +19,10 @@ export default function CreateTodo() {
 
   const handleInsertContentChange = (e) => {
     setinsertContent(e.target.value);
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   const handleSubmit = async (e) => {
@@ -65,7 +68,7 @@ export default function CreateTodo() {
         </div>
         <button>作成</button>
       </form>
-      <Link href="/">戻る</Link>
+      <button onClick={handleBack}>戻る</button>
     </>
   );
 }

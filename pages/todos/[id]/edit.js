@@ -1,22 +1,15 @@
 import db from "@/lib/firebase";
 import getTodo from "@/lib/todos";
 import { doc, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 export default function EditTodo({ todo }) {
   const router = useRouter();
 
   // state
-  const [editTodo, setEditTodo] = useState(null);
-  const [editContent, setEditContent] = useState("");
-  const [editStatus, setEditStatus] = useState("");
-
-  //表示項目に初期値設定
-  useEffect(() => {
-    setEditContent(todo.content);
-    setEditStatus(todo.status);
-  }, []);
+  const [editContent, setEditContent] = useState(todo.content);
+  const [editStatus, setEditStatus] = useState(todo.status);
 
   // 関数
   const handleSubmit = async (e) => {
@@ -54,7 +47,6 @@ export default function EditTodo({ todo }) {
             <option value="inProgress">着手</option>
             <option value="done">完了</option>
           </select>
-          <p>{todo.status}</p>
           <hr />
           <textarea value={editContent} onChange={handleEditContentChange} />
           <button type="submit">更新</button>

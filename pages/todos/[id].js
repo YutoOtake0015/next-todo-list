@@ -1,7 +1,9 @@
 import getTodo from "@/lib/todos";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import statusItems from "../../components/items";
+import db from "@/lib/firebase";
+import { deleteDoc, doc } from "firebase/firestore";
+import Link from "next/link";
 
 export default function Todo({ todo }) {
   const router = useRouter();
@@ -10,10 +12,18 @@ export default function Todo({ todo }) {
     router.back();
   };
 
+  const handleDelete = async () => {
+    const todoRef = doc(db, "todos", todo.id);
+    await deleteDoc(todoRef);
+
+    router.push("/");
+  };
+
   return (
     <>
       <div>
         <Link href={`./${todo.id}/edit`}>編集</Link>
+        <button onClick={handleDelete}>削除</button>
         <h1>{todo.title}</h1>
         <p>{statusItems[todo.status]}</p>
         <hr />

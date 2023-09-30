@@ -33,7 +33,7 @@ export default function CreateTodo() {
     await addDoc(todosCollection, {
       title: insertTitle,
       content: insertContent,
-      status: "未着手",
+      status: "notStarted",
       createdAt: serverTimestamp(),
     });
 
